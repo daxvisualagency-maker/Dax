@@ -1,0 +1,22 @@
+{
+  "name": "DAX Visual Agency",
+  "short_name": "DAX",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "assets/simbolo-dax.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/simbolo-dax.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "description": "Agência de marketing digital e design em Teresina – PI."
+}

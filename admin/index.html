@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DAX Admin — Painel de Controle</title>
+    <link rel="icon" type="image/png" href="../assets/simbolo-dax.png">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;600;700&display=swap');
+
+        :root {
+            --black: #000;
+            --white: #fff;
+            --gray-100: #f5f5f5;
+            --gray-300: #bbb;
+            --gray-600: #3a3a3a;
+            --gray-900: #111;
+            --green: #22c55e;
+            --red: #ef4444;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: var(--black);
+            color: var(--white);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+        }
+
+        /* ---- LOGIN ---- */
+        #login-screen {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            padding: 20px;
+        }
+
+        #login-screen img {
+            width: 80px;
+            opacity: 0.8;
+        }
+
+        #login-screen h1 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2.5rem;
+            letter-spacing: 0.3em;
+        }
+
+        #login-screen p {
+            color: var(--gray-300);
+            font-size: 0.9rem;
+        }
+
+        .login-form {
+            width: 100%;
+            max-width: 380px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .login-form input {
+            background: var(--gray-900);
+            border: 1px solid var(--gray-600);
+            color: var(--white);
+            padding: 14px 16px;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            width: 100%;
+        }
+
+        .login-form input:focus {
+            outline: none;
+            border-color: var(--white);
+        }
+
+        .login-form input::placeholder { color: #555; }
+
+        .btn-login {
+            background: var(--white);
+            color: var(--black);
+            padding: 14px;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.2rem;
+            letter-spacing: 0.15em;
+            border: none;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .btn-login:hover { opacity: 0.85; }
+
+        #login-error {
+            color: var(--red);
+            font-size: 0.85rem;
+            text-align: center;
+            display: none;
+        }
+
+        /* ---- ADMIN PANEL ---- */
+        #admin-panel { display: none; }
+
+        .admin-header {
+            background: var(--gray-900);
+            border-bottom: 1px solid var(--gray-600);
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .admin-header .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .admin-header img { width: 36px; opacity: 0.8; }
+
+        .admin-header h2 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.4rem;
+            letter-spacing: 0.2em;
+        }
+
+        .btn-logout {
+            background: transparent;
+            border: 1px solid var(--gray-600);
+            color: var(--gray-300);
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .btn-logout:hover { border-color: var(--white); color: var(--white); }
+
+        .admin-body {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 24px 80px;
+        }
+
+        .section-label {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.6rem;
+            letter-spacing: 0.15em;
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--gray-600);
+        }
+
+        .pacote-editor {
+            background: var(--gray-900);
+            border: 1px solid var(--gray-600);
+            padding: 28px;
+            margin-bottom: 20px;
+            border-radius: 2px;
+        }
+
+        .pacote-editor h3 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.2rem;
+            letter-spacing: 0.1em;
+            margin-bottom: 20px;
+            color: var(--gray-300);
+        }
+
+        .field-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .field-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .field-group.full { grid-column: 1 / -1; }
+
+        .field-group label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--gray-300);
+        }
+
+        .field-group input,
+        .field-group textarea {
+            background: #0a0a0a;
+            border: 1px solid var(--gray-600);
+            color: var(--white);
+            padding: 10px 12px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+        }
+
+        .field-group input:focus,
+        .field-group textarea:focus {
+            outline: none;
+            border-color: var(--white);
+        }
+
+        .field-group textarea { resize: vertical; min-height: 80px; }
+
+        .btn-save {
+            background: var(--white);
+            color: var(--black);
+            border: none;
+            padding: 16px 40px;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.2rem;
+            letter-spacing: 0.15em;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            margin-top: 20px;
+        }
+
+        .btn-save:hover { opacity: 0.85; }
+        .btn-save:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        #save-status {
+            margin-top: 16px;
+            font-size: 0.9rem;
+            min-height: 24px;
+        }
+
+        .status-ok { color: var(--green); }
+        .status-err { color: var(--red); }
+        .status-loading { color: var(--gray-300); }
+
+        /* Token config */
+        .token-section {
+            background: var(--gray-900);
+            border: 1px solid var(--gray-600);
+            padding: 20px 28px;
+            margin-bottom: 40px;
+        }
+
+        .token-section h4 {
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--gray-300);
+            margin-bottom: 12px;
+        }
+
+        .token-row {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .token-row input {
+            flex: 1;
+            background: #0a0a0a;
+            border: 1px solid var(--gray-600);
+            color: var(--white);
+            padding: 10px 12px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+        }
+
+        .token-row input:focus { outline: none; border-color: var(--white); }
+
+        .btn-token {
+            background: transparent;
+            border: 1px solid var(--gray-600);
+            color: var(--white);
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+
+        .btn-token:hover { border-color: var(--white); }
+
+        .token-info {
+            font-size: 0.75rem;
+            color: #555;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+
+        #token-status { font-size: 0.8rem; margin-top: 6px; }
+
+        @media (max-width: 600px) {
+            .field-row { grid-template-columns: 1fr; }
+            .admin-header { padding: 14px 16px; }
+            .admin-body { padding: 0 16px 60px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+    <img src="../assets/simbolo-dax.png" alt="DAX">
+    <h1>DAX ADMIN</h1>
+    <p>Acesso restrito à equipe DAX</p>
+
+    <div class="login-form">
+        <input type="password" id="senha-input" placeholder="Senha de acesso" autocomplete="current-password">
+        <button class="btn-login" onclick="tentarLogin()">Entrar</button>
+        <div id="login-error">Senha incorreta. Tente novamente.</div>
+    </div>
+</div>
+
+<!-- PAINEL ADMIN -->
+<div id="admin-panel">
+    <div class="admin-header">
+        <div class="logo">
+            <img src="../assets/simbolo-dax.png" alt="DAX">
+            <h2>Painel DAX</h2>
+        </div>
+        <button class="btn-logout" onclick="logout()">Sair</button>
+    </div>
+
+    <div class="admin-body">
+
+        <!-- Configurar Token GitHub -->
+        <div class="token-section">
+            <h4>Token GitHub (salvo localmente neste navegador)</h4>
+            <div class="token-row">
+                <input type="password" id="gh-token" placeholder="ghp_xxxxxxxxxxxx">
+                <button class="btn-token" onclick="salvarToken()">Salvar Token</button>
+            </div>
+            <p class="token-info">O token é salvo apenas no seu navegador e nunca enviado a terceiros. Ele é necessário para publicar alterações no site.</p>
+            <div id="token-status"></div>
+        </div>
+
+        <!-- Pacotes -->
+        <div class="section-label">Pacotes e Preços</div>
+        <div id="pacotes-editor">
+            <!-- preenchido pelo JS -->
+        </div>
+
+        <button class="btn-save" onclick="salvarAlteracoes()">Publicar Alterações no Site</button>
+        <div id="save-status"></div>
+
+    </div>
+</div>
+
+<script>
+    // Senha hardcoded (pode ser alterada aqui)
+    const SENHA_HASH = 'dax@visual2026';
+
+    const REPO_OWNER = 'daxvisualagency-maker';
+    const REPO_NAME = 'Dax';
+    const CONFIG_PATH = 'data/config.json';
+
+    let configAtual = null;
+
+    // ---- LOGIN ----
+    function tentarLogin() {
+        const senha = document.getElementById('senha-input').value;
+        if (senha === SENHA_HASH) {
+            sessionStorage.setItem('dax-admin-ok', '1');
+            mostrarAdmin();
+        } else {
+            document.getElementById('login-error').style.display = 'block';
+        }
+    }
+
+    document.getElementById('senha-input').addEventListener('keydown', e => {
+        if (e.key === 'Enter') tentarLogin();
+    });
+
+    function logout() {
+        sessionStorage.removeItem('dax-admin-ok');
+        location.reload();
+    }
+
+    function mostrarAdmin() {
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('admin-panel').style.display = 'block';
+        carregarToken();
+        carregarConfig();
+    }
+
+    if (sessionStorage.getItem('dax-admin-ok')) mostrarAdmin();
+
+    // ---- TOKEN ----
+    function salvarToken() {
+        const token = document.getElementById('gh-token').value.trim();
+        if (!token.startsWith('ghp_') && !token.startsWith('github_pat_')) {
+            document.getElementById('token-status').innerHTML = '<span style="color:#ef4444">Token inválido. Deve começar com ghp_ ou github_pat_</span>';
+            return;
+        }
+        localStorage.setItem('dax-gh-token', token);
+        document.getElementById('gh-token').value = '';
+        document.getElementById('token-status').innerHTML = '<span style="color:#22c55e">✓ Token salvo com sucesso</span>';
+    }
+
+    function carregarToken() {
+        const token = localStorage.getItem('dax-gh-token');
+        if (token) {
+            document.getElementById('gh-token').placeholder = '••••••• (token já configurado)';
+            document.getElementById('token-status').innerHTML = '<span style="color:#22c55e">✓ Token configurado</span>';
+        }
+    }
+
+    function getToken() {
+        return localStorage.getItem('dax-gh-token');
+    }
+
+    // ---- CARREGAR CONFIG ----
+    async function carregarConfig() {
+        try {
+            const r = await fetch('../data/config.json?v=' + Date.now());
+            configAtual = await r.json();
+            renderEditor(configAtual);
+        } catch (e) {
+            document.getElementById('pacotes-editor').innerHTML =
+                '<p style="color:#ef4444">Erro ao carregar config.json. Verifique o servidor.</p>';
+        }
+    }
+
+    function renderEditor(cfg) {
+        const container = document.getElementById('pacotes-editor');
+        container.innerHTML = '';
+
+        cfg.pacotes.forEach((p, i) => {
+            const div = document.createElement('div');
+            div.className = 'pacote-editor';
+            div.innerHTML = `
+                <h3>${p.nome}</h3>
+                <div class="field-row">
+                    <div class="field-group">
+                        <label>Nome do Pacote</label>
+                        <input type="text" data-idx="${i}" data-field="nome" value="${esc(p.nome)}">
+                    </div>
+                    <div class="field-group">
+                        <label>Preço</label>
+                        <input type="text" data-idx="${i}" data-field="preco" value="${esc(p.preco)}" placeholder="Ex: R$ 800 - 1.200">
+                    </div>
+                </div>
+                <div class="field-row">
+                    <div class="field-group full">
+                        <label>Descrição</label>
+                        <textarea data-idx="${i}" data-field="desc">${esc(p.desc)}</textarea>
+                    </div>
+                </div>`;
+            container.appendChild(div);
+        });
+    }
+
+    function esc(str) {
+        return String(str).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+    }
+
+    // ---- SALVAR VIA GITHUB API ----
+    async function salvarAlteracoes() {
+        const token = getToken();
+        if (!token) {
+            setStatus('Por favor, configure seu Token GitHub acima antes de salvar.', 'err');
+            return;
+        }
+
+        // Coletar dados do formulário
+        const novoConfig = JSON.parse(JSON.stringify(configAtual));
+
+        document.querySelectorAll('[data-idx][data-field]').forEach(input => {
+            const idx = parseInt(input.dataset.idx);
+            const field = input.dataset.field;
+            novoConfig.pacotes[idx][field] = input.value;
+        });
+
+        setStatus('Publicando alterações...', 'loading');
+        document.querySelector('.btn-save').disabled = true;
+
+        try {
+            // 1. Pegar SHA atual do arquivo
+            const metaRes = await fetch(
+                `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${CONFIG_PATH}`,
+                { headers: { Authorization: `token ${token}`, Accept: 'application/vnd.github.v3+json' } }
+            );
+
+            if (!metaRes.ok) {
+                if (metaRes.status === 401) throw new Error('Token inválido ou sem permissão.');
+                throw new Error(`Erro ao acessar repositório: ${metaRes.status}`);
+            }
+
+            const meta = await metaRes.json();
+            const sha = meta.sha;
+
+            // 2. Commitar novo conteúdo
+            const conteudo = JSON.stringify(novoConfig, null, 2);
+            const base64 = btoa(unescape(encodeURIComponent(conteudo)));
+
+            const putRes = await fetch(
+                `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${CONFIG_PATH}`,
+                {
+                    method: 'PUT',
+                    headers: {
+                        Authorization: `token ${token}`,
+                        Accept: 'application/vnd.github.v3+json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: 'admin: atualizar preços e dados dos pacotes',
+                        content: base64,
+                        sha: sha
+                    })
+                }
+            );
+
+            if (!putRes.ok) {
+                const err = await putRes.json();
+                throw new Error(err.message || `Erro ${putRes.status}`);
+            }
+
+            configAtual = novoConfig;
+            setStatus('✓ Publicado com sucesso! O site atualiza em ~30 segundos.', 'ok');
+
+        } catch (e) {
+            setStatus(`Erro: ${e.message}`, 'err');
+        } finally {
+            document.querySelector('.btn-save').disabled = false;
+        }
+    }
+
+    function setStatus(msg, tipo) {
+        const el = document.getElementById('save-status');
+        el.className = tipo === 'ok' ? 'status-ok' : tipo === 'err' ? 'status-err' : 'status-loading';
+        el.textContent = msg;
+    }
+</script>
+</body>
+</html>

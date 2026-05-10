@@ -1,0 +1,58 @@
+{
+  "pacotes": [
+    {
+      "id": "start",
+      "nome": "START",
+      "preco": "R$ 800 - 1.200",
+      "periodo": "/mês",
+      "desc": "Ideal para pequenos negócios que estão começando a sua presença digital.",
+      "destaque": false,
+      "personalizado": false
+    },
+    {
+      "id": "crescimento",
+      "nome": "CRESCIMENTO",
+      "preco": "R$ 1.500 - 2.200",
+      "periodo": "/mês",
+      "desc": "Para empresas em expansão que precisam de consistência e autoridade.",
+      "destaque": false,
+      "personalizado": false
+    },
+    {
+      "id": "autoridade",
+      "nome": "AUTORIDADE",
+      "preco": "R$ 2.500 - 3.500",
+      "periodo": "/mês",
+      "desc": "Foco em clínicas e marcas consolidadas que buscam o topo do mercado.",
+      "destaque": true,
+      "personalizado": false
+    },
+    {
+      "id": "premium",
+      "nome": "PREMIUM",
+      "preco": "R$ 4.000+",
+      "periodo": "/mês",
+      "desc": "Foco total em escala, conversão e domínio completo do nicho.",
+      "destaque": false,
+      "personalizado": false
+    },
+    {
+      "id": "personalizado",
+      "nome": "PERSONALIZADO",
+      "preco": "Orçamento sob consulta",
+      "periodo": "",
+      "desc": "Tem um projeto fora do padrão ou precisa de algo específico? Fale diretamente com a nossa equipe e montamos juntos a solução ideal para o seu negócio.",
+      "destaque": false,
+      "personalizado": true
+    }
+  ],
+  "hero": {
+    "titulo": "Sua marca merece ser vista.",
+    "subtitulo": "Agência de marketing digital e design em Teresina – PI."
+  },
+  "contato": {
+    "whatsapp": "5586988922992",
+    "email": "daxvisualagency@gmail.com",
+    "instagram": "dax.visual"
+  }
+}

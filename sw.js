@@ -1,41 +1,71 @@
-const CACHE_NAME = 'dax-v1';
-const assets = [
-  '/',
-  '/index.html',
-  '/css/style.css',
-  '/js/app.js',
-  '/manifest.json',
-  '/assets/logo-dax.png',
-  '/assets/simbolo-dax.png'
+const CACHE_NAME = 'dax-cache-v3';
+const BASE = '/Dax';
+
+const STATIC_ASSETS = [
+  BASE + '/',
+  BASE + '/index.html',
+  BASE + '/css/style.css',
+  BASE + '/js/app.js',
+  BASE + '/manifest.json',
+  BASE + '/assets/logo-dax.png',
+  BASE + '/assets/simbolo-dax.png',
+  BASE + '/data/config.json'
 ];
 
 self.addEventListener('install', event => {
+  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => {
-      return cache.addAll(assets);
-    })
-  );
-});
-
-self.addEventListener('fetch', event => {
-  event.respondWith(
-    caches.match(event.request).then(response => {
-      return response || fetch(event.request);
+      return cache.addAll(STATIC_ASSETS).catch(() => {});
     })
   );
 });
 
 self.addEventListener('activate', event => {
-  const cacheWhitelist = [CACHE_NAME];
   event.waitUntil(
-    caches.keys().then(cacheNames => {
-      return Promise.all(
-        cacheNames.map(cacheName => {
-          if (!cacheWhitelist.includes(cacheName)) {
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    })
+    Promise.all([
+      self.clients.claim(),
+      caches.keys().then(keys =>
+        Promise.all(
+          keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))
+        )
+      )
+    ])
   );
+});
+
+self.addEventListener('fetch', event => {
+  if (event.request.method !== 'GET') return;
+
+  const isHTML = event.request.headers.get('accept')?.includes('text/html');
+
+  if (isHTML) {
+    event.respondWith(
+      fetch(event.request)
+        .then(res => {
+          const clone = res.clone();
+          caches.open(CACHE_NAME).then(c => c.put(event.request, clone));
+          return res;
+        })
+        .catch(() =>
+          caches.match(event.request) ||
+          caches.match(BASE + '/index.html')
+        )
+    );
+  } else {
+    event.respondWith(
+      caches.match(event.request).then(cached => {
+        if (cached) return cached;
+        return fetch(event.request)
+          .then(res => {
+            if (res.ok) {
+              const clone = res.clone();
+              caches.open(CACHE_NAME).then(c => c.put(event.request, clone));
+            }
+            return res;
+          })
+          .catch(() => cached || new Response('', { status: 503 }));
+      })
+    );
+  }
 });

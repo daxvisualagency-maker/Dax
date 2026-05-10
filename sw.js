@@ -1,4 +1,4 @@
-const CACHE_NAME = 'dax-cache-v3';
+const CACHE_NAME = 'dax-cache-v4';
 const BASE = '/Dax';
 
 const STATIC_ASSETS = [
